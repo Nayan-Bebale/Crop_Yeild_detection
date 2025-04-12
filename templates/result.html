@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <a href="{{ url_for('home') }}">Home</a>
+    <div class="container">
+        <h1>Prediction Result</h1>
+        <h3>Predicted Yield: {{ prediction|round(2) }} tons/hectare</h3>
+        
+        <h4>Input Parameters:</h4>
+        <ul>
+            {% for key, value in input_data.items() %}
+                <li>{{ key }}: {{ value }}</li>
+            {% endfor %}
+        </ul>
+        
+        <h4>Location on Map:</h4>
+        <div id="map" style="height: 400px;"></div>
+    </div>
+
+    <script>
+        var map = L.map('map').setView([{{ lat }}, {{ lon }}], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        L.marker([{{ lat }}, {{ lon }}])
+            .addTo(map)
+            .bindPopup('{{ state }}<br>Predicted Yield: {{ prediction|round(2) }} t/ha')
+            .openPopup();
+    </script>
+</body>
+</html>

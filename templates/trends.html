@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Yield Trends</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <a href="{{ url_for('home') }}">Home</a>
+    <div class="container">
+        <h1>Yield Trends</h1>
+        <form method="POST">
+            <input type="text" name="crop" placeholder="Crop Name" required><br>
+            <input type="text" name="state" placeholder="State" required><br>
+            <input type="submit" value="Show Trends">
+        </form>
+        {% if years %}
+            <canvas id="trendChart" width="400" height="200"></canvas>
+            <script>
+                const ctx = document.getElementById('trendChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: {{ years|tojson }},
+                        datasets: [{
+                            label: 'Yield (tons/ha) for {{ crop }} in {{ state }}',
+                            data: {{ yields|tojson }},
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            </script>
+        {% endif %}
+    </div>
+</body>
+</html>

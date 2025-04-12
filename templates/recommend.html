@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crop Recommendations</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('home') }}">Home</a>
+    <div class="container">
+        <h1>Crop Recommendations</h1>
+        <form method="POST">
+            <input type="text" name="state" placeholder="State" required><br>
+            <input type="text" name="season" placeholder="Season" required><br>
+            <input type="submit" value="Get Recommendations">
+        </form>
+        {% if recommendations %}
+            <h3>Top Crops for {{ season }} in {{ state }}:</h3>
+            <ul>
+            {% for crop, yield in recommendations.items() %}
+                <li>{{ crop }}: {{ yield|round(2) }} tons/ha</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>
