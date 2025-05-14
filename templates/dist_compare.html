@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crop Comparison</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">AgriPredict</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('trends') }}">View Historical Trends</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('recommend') }}">Crop Recommendations</a>
+                    </li>
+
+                    <div class="dropdown">
+                        <a class="btn btn-warning dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          District-wise
+                        </a>
+                      
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="{{ url_for('dist_prediction') }}">District Wise Prediction</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_trends') }}">District wise trends</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_compare') }}">District wise compare</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_insights') }}">District Insights</a></li>
+                        </ul>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <!-- Card -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">Crop Comparison</h4>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Error Message -->
+                        {% if error %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Form -->
+                        <form method="POST" action="/dist_compare" class="mb-4">
+                            <div class="mb-3">
+                                <label for="district" class="form-label">District</label>
+                                <input type="text" id="district" name="district" class="form-control" placeholder="Enter district" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="year" class="form-label">Year</label>
+                                <input type="number" id="year" name="year" class="form-control" placeholder="Enter year (i.e. 1978 to 2017)" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Compare Crops</button>
+                        </form>
+
+                        {% if comparison %}
+                        <h5 class="text-secondary">Crop Yields in {{ district }} ({{ year }})</h5>
+                        <canvas id="compareChart" height="300"></canvas>
+
+                        <script>
+                            const ctx = document.getElementById('compareChart').getContext('2d');
+                            new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: {{ crop_names|tojson }},
+                                    datasets: [{
+                                        label: 'Yield (Kg/ha)',
+                                        data: {{ crop_yields|tojson }},
+                                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                                        borderColor: 'rgba(75, 192, 192, 1)',
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: (context) => `${context.parsed.y} Kg/ha`
+                                            }
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: 'Yield (Kg/ha)'
+                                            }
+                                        },
+                                        x: {
+                                            title: {
+                                                display: true,
+                                                text: 'Crops'
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        </script>
+                        {% else %}
+                        {% if district and year %}
+                        <p>No crop yield data available for {{ district }} in {{ year }}.</p>
+                        {% endif %}
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

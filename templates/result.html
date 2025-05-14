@@ -1,37 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Prediction Result</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <!-- Bootstrap CSS -->
+    <link href="/static/style.css" rel="stylesheet">
+
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
-<body>
-    <a href="{{ url_for('home') }}">Home</a>
+<body class="bg-light">
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">AgriPredict</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('trends') }}">View Historical Trends</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('recommend') }}">Crop Recommendations</a>
+                    </li>
+
+                    <div class="dropdown">
+                        <a class="btn btn-warning dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          District-wise
+                        </a>
+                      
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="{{ url_for('dist_prediction') }}">District Wise Prediction</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_trends') }}">District wise trends</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_compare') }}">District wise compare</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_insights') }}">District Insights</a></li>
+                        </ul>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
     <div class="container">
-        <h1>Prediction Result</h1>
-        <h3>Predicted Yield: {{ prediction|round(2) }} tons/hectare</h3>
-        
-        <h4>Input Parameters:</h4>
-        <ul>
-            {% for key, value in input_data.items() %}
-                <li>{{ key }}: {{ value }}</li>
-            {% endfor %}
-        </ul>
-        
-        <h4>Location on Map:</h4>
-        <div id="map" style="height: 400px;"></div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">Prediction Result</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="mb-3 text-success">Predicted Yield: <strong>{{ prediction|round(2) }}</strong> tons/hectare</h5>
+
+                        <h6 class="text-muted mb-2">Input Parameters:</h6>
+                        <ul class="list-group mb-3">
+                            {% for key, value in input_data.items() %}
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <strong>{{ key|capitalize }}</strong>
+                                    <span>{{ value }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <h6 class="text-muted mb-2">Location on Map:</h6>
+                        <div id="map" style="height: 400px; border: 1px solid #ced4da; border-radius: 0.5rem;"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Leaflet Map Initialization -->
     <script>
-        var map = L.map('map').setView([{{ lat }}, {{ lon }}], 5);
+        var map = L.map('map').setView([{{ lat }}, {{ lon }}], 6);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
-        
+
         L.marker([{{ lat }}, {{ lon }}])
             .addTo(map)
-            .bindPopup('{{ state }}<br>Predicted Yield: {{ prediction|round(2) }} t/ha')
+            .bindPopup(`<strong>{{ state }}</strong><br>Predicted Yield: {{ prediction|round(2) }} t/ha`)
             .openPopup();
     </script>
 </body>

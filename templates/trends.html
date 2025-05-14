@@ -1,40 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Yield Trends</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Bootstrap CSS -->
+    <link href="/static/style.css" rel="stylesheet">
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-    <a href="{{ url_for('home') }}">Home</a>
+<body class="bg-light">
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">AgriPredict</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('trends') }}">View Historical Trends</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('recommend') }}">Crop Recommendations</a>
+                    </li>
+
+                    <div class="dropdown">
+                        <a class="btn btn-warning dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          District-wise
+                        </a>
+                      
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="{{ url_for('dist_prediction') }}">District Wise Prediction</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_trends') }}">District wise trends</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_compare') }}">District wise compare</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_insights') }}">District Insights</a></li>
+                        </ul>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
     <div class="container">
-        <h1>Yield Trends</h1>
-        <form method="POST">
-            <input type="text" name="crop" placeholder="Crop Name" required><br>
-            <input type="text" name="state" placeholder="State" required><br>
-            <input type="submit" value="Show Trends">
-        </form>
-        {% if years %}
-            <canvas id="trendChart" width="400" height="200"></canvas>
-            <script>
-                const ctx = document.getElementById('trendChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: {{ years|tojson }},
-                        datasets: [{
-                            label: 'Yield (tons/ha) for {{ crop }} in {{ state }}',
-                            data: {{ yields|tojson }},
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            fill: false
-                        }]
-                    },
-                    options: {
-                        scales: { y: { beginAtZero: true } }
-                    }
-                });
-            </script>
-        {% endif %}
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <!-- Form Card -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">View Yield Trends</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="mb-3">
+                                <label for="crop" class="form-label">Crop Name</label>
+                                <input type="text" name="crop" id="crop" class="form-control" placeholder="Enter crop name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" name="state" id="state" class="form-control" placeholder="Enter state name" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success">Show Trends</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Chart Card -->
+                {% if years %}
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Yield Trend for "{{ crop }}" in {{ state }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="trendChart" height="120"></canvas>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
     </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Chart.js Rendering -->
+    {% if years %}
+    <script>
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ years|tojson }},
+                datasets: [{
+                    label: 'Yield (tons/ha)',
+                    data: {{ yields|tojson }},
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Year' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Yield (tons/hectare)' }
+                    }
+                }
+            }
+        });
+    </script>
+    {% endif %}
 </body>
 </html>

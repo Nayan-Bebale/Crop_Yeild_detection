@@ -1,29 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Crop Yield Prediction</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="/static/style.css" rel="stylesheet">
 </head>
-<body>
-    <ul><span>
-        <li><a href="{{ url_for('trends') }}">View Historical Trends</a></li></span>    
-        <li><a href="{{ url_for('recommend') }}">Crop Recommendations</a></li>
-    </ul> 
+<body class="bg-light">
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">AgriPredict</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('trends') }}">View Historical Trends</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('recommend') }}">Crop Recommendations</a>
+                    </li>
+
+                    <div class="dropdown">
+                        <a class="btn btn-warning dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          District-wise
+                        </a>
+                      
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="{{ url_for('dist_prediction') }}">District Wise Prediction</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_trends') }}">District wise trends</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_compare') }}">District wise compare</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_insights') }}">District Insights</a></li>
+                        </ul>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
     <div class="container">
-        <h1>Crop Yield Prediction in India</h1>
-        <form method="POST" action="/predict">
-            <input type="text" name="crop" placeholder="Crop Name" required><br>
-            <input type="number" name="year" placeholder="Crop Year" required><br>
-            <input type="text" name="season" placeholder="Season" required><br>
-            <input type="text" name="state" placeholder="State" required><br>
-            <input type="number" name="area" placeholder="Area (hectares)" step="0.01" required><br>
-            <input type="number" name="production" placeholder="Production (tons)" step="0.01" required><br>
-            <input type="number" name="rainfall" placeholder="Annual Rainfall (mm)" step="0.01" required><br>
-            <input type="number" name="fertilizer" placeholder="Fertilizer (kg)" step="0.01" required><br>
-            <input type="number" name="pesticide" placeholder="Pesticide (kg)" step="0.01" required><br>
-            <input type="submit" value="Predict Yield">
-        </form>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">Crop Yield Prediction in India</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/predict">
+                            <div class="mb-3">
+                                <label for="crop" class="form-label">Crop Name</label>
+                                <input type="text" class="form-control" name="crop" id="crop" placeholder="Crop Name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="year" class="form-label">Crop Year</label>
+                                <input type="number" class="form-control" name="year" id="year" placeholder="Crop Year" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="season" class="form-label">Season</label>
+                                <input type="text" class="form-control" name="season" id="season" placeholder="Season" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" class="form-control" name="state" id="state" placeholder="State" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="area" class="form-label">Area (hectares)</label>
+                                <input type="number" class="form-control" name="area" id="area" step="0.01" placeholder="Area in hectares" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="production" class="form-label">Production (tons)</label>
+                                <input type="number" class="form-control" name="production" id="production" step="0.01" placeholder="Production in tons" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="rainfall" class="form-label">Annual Rainfall (mm)</label>
+                                <input type="number" class="form-control" name="rainfall" id="rainfall" step="0.01" placeholder="Rainfall in mm" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="fertilizer" class="form-label">Fertilizer Used (kg)</label>
+                                <input type="number" class="form-control" name="fertilizer" id="fertilizer" step="0.01" placeholder="Fertilizer in kg" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="pesticide" class="form-label">Pesticide Used (kg)</label>
+                                <input type="number" class="form-control" name="pesticide" id="pesticide" step="0.01" placeholder="Pesticide in kg" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success">Predict Yield</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-       
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

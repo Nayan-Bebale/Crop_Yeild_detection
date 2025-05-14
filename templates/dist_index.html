@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crop Yield Prediction</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">AgriPredict</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('trends') }}">View Historical Trends</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('recommend') }}">Crop Recommendations</a>
+                    </li>
+
+                    <div class="dropdown">
+                        <a class="btn btn-warning dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          District-wise
+                        </a>
+                      
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="{{ url_for('dist_prediction') }}">District Wise Prediction</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_trends') }}">District wise trends</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_compare') }}">District wise compare</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('dist_insights') }}">District Insights</a></li>
+                        </ul>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <!-- Form Card -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">Predict Crop Yield</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/dist_predict">
+                            <div class="mb-3">
+                                <label class="form-label">Crop Name</label>
+                                <input type="text" name="crop" class="form-control" placeholder="e.g., RICE" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Year</label>
+                                <input type="number" name="year" class="form-control" placeholder="e.g., 2023" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Season</label>
+                                <input type="text" name="season" class="form-control" placeholder="e.g., Kharif" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">State</label>
+                                <input type="text" name="state" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">District</label>
+                                <input type="text" name="district" class="form-control" placeholder="e.g., Durg" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Area (1000 ha)</label>
+                                <input type="number" name="area" step="0.01" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Production (1000 tons)</label>
+                                <input type="number" name="production" step="0.01" class="form-control" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success">Predict Yield</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="/static/js/style.js"></script>
+</body>
+</html>
